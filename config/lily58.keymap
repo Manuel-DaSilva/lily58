@@ -22,6 +22,85 @@
                         bindings = <&kp>, <&kp>;
                 };
         };
+    macros {
+        tmux_1: tmux_1 {
+            compatible = "zmk,behavior-macro";
+            #binding-cells = <0>;
+            wait-ms = <40>;
+            tap-ms = <40>;
+            bindings = <&macro_press &kp LCTRL>, <&macro_tap &kp B>, <&macro_release &kp LCTRL>, <&macro_tap &kp N1>;
+        };
+        tmux_2: tmux_2 {
+            compatible = "zmk,behavior-macro";
+            #binding-cells = <0>;
+            wait-ms = <40>;
+            tap-ms = <40>;
+            bindings = <&macro_press &kp LCTRL>, <&macro_tap &kp B>, <&macro_release &kp LCTRL>, <&macro_tap &kp N2>;
+        };
+        tmux_3: tmux_3 {
+            compatible = "zmk,behavior-macro";
+            #binding-cells = <0>;
+            wait-ms = <40>;
+            tap-ms = <40>;
+            bindings = <&macro_press &kp LCTRL>, <&macro_tap &kp B>, <&macro_release &kp LCTRL>, <&macro_tap &kp N3>;
+        };
+        tmux_4: tmux_4 {
+            compatible = "zmk,behavior-macro";
+            #binding-cells = <0>;
+            wait-ms = <40>;
+            tap-ms = <40>;
+            bindings = <&macro_press &kp LCTRL>, <&macro_tap &kp B>, <&macro_release &kp LCTRL>, <&macro_tap &kp N4>;
+        };
+        tmux_5: tmux_5 {
+            compatible = "zmk,behavior-macro";
+            #binding-cells = <0>;
+            wait-ms = <40>;
+            tap-ms = <40>;
+            bindings = <&macro_press &kp LCTRL>, <&macro_tap &kp B>, <&macro_release &kp LCTRL>, <&macro_tap &kp N5>;
+        };
+        tmux_c: tmux_c {
+            compatible = "zmk,behavior-macro";
+            #binding-cells = <0>;
+            wait-ms = <40>;
+            tap-ms = <40>;
+            bindings = <&macro_press &kp LCTRL>, <&macro_tap &kp B>, <&macro_release &kp LCTRL>, <&macro_tap &kp C>;
+        };
+        tmux_percent: tmux_percent {
+            compatible = "zmk,behavior-macro";
+            #binding-cells = <0>;
+            wait-ms = <40>;
+            tap-ms = <40>;
+            bindings = <&macro_press &kp LCTRL>, <&macro_tap &kp B>, <&macro_release &kp LCTRL>, <&macro_tap &kp PRCNT>;
+        };
+        tmux_less: tmux_less {
+            compatible = "zmk,behavior-macro";
+            #binding-cells = <0>;
+            wait-ms = <40>;
+            tap-ms = <40>;
+            bindings = <&macro_press &kp LCTRL>, <&macro_tap &kp B>, <&macro_release &kp LCTRL>, <&macro_tap &kp LT>;
+        };
+        tmux_greater: tmux_greater {
+            compatible = "zmk,behavior-macro";
+            #binding-cells = <0>;
+            wait-ms = <40>;
+            tap-ms = <40>;
+            bindings = <&macro_press &kp LCTRL>, <&macro_tap &kp B>, <&macro_release &kp LCTRL>, <&macro_tap &kp GT>;
+        };
+        tmux_x: tmux_x {
+            compatible = "zmk,behavior-macro";
+            #binding-cells = <0>;
+            wait-ms = <40>;
+            tap-ms = <40>;
+            bindings = <&macro_press &kp LCTRL>, <&macro_tap &kp B>, <&macro_release &kp LCTRL>, <&macro_tap &kp X>;
+        };
+        tmux_d: tmux_d {
+            compatible = "zmk,behavior-macro";
+            #binding-cells = <0>;
+            wait-ms = <40>;
+            tap-ms = <40>;
+            bindings = <&macro_press &kp LCTRL>, <&macro_tap &kp B>, <&macro_release &kp LCTRL>, <&macro_tap &kp D>;
+        };
+    };
     keymap {
         compatible = "zmk,keymap";
 
@@ -41,7 +120,7 @@
         lower_layer {
             display-name = "Lower";
             bindings = <
-&trans      &trans          &trans            &trans            &trans       &trans                                    &trans     &trans          &trans           &trans           &trans    &trans
+&kp F1      &kp F2          &kp F3            &kp F4            &kp F5       &kp F6                                    &kp F7     &kp F8          &kp F9           &kp F10          &kp F11   &kp F12
 &kp LCTRL  &kp EXCL         &kp AT            &kp HASH          &kp DLLR     &kp PRCNT                                 &kp CARET  &kp AMPS        &kp KP_MULTIPLY  &kp LPAR         &kp RPAR  &kp BSPC
 &kp TAB    &kp UNDER        &kp PLUS          &kp LBRC          &kp RBRC     &kp PIPE                                  &kp MINUS  &hm RGUI EQUAL  &hm RALT LBKT    &hm RCTRL RBKT   &kp BSLH  &kp GRAVE
 &trans     &trans           &trans            &trans            &trans       &trans        &bt BT_CLR   &bt BT_SEL 0   &trans     &kp MINUS       &kp KP_PLUS      &kp LBRC         &kp RBRC  &kp TILDE
@@ -56,8 +135,8 @@
             bindings = <
 &trans      &trans   &trans   &trans   &trans   &trans                       &trans       &trans     &trans     &trans    &trans     &trans
 &kp GRAVE   &kp N1   &kp N2   &kp N3   &kp N4   &kp N5                       &kp N6       &kp N7     &kp N8     &kp N9    &kp N0     &trans
-&kp F1      &kp F2   &kp F3   &kp F4   &kp F5   &kp F6                       &trans       &kp LEFT   &kp DOWN   &kp UP    &kp RIGHT  &trans
-&kp F7      &kp F8   &kp F9   &kp F10  &kp F11  &kp F12   &trans   &trans    &kp KP_PLUS  &kp MINUS  &kp EQUAL  &kp LBKT  &kp RBKT   &kp BSLH
+&trans      &trans   &trans   &trans   &trans   &trans                       &trans       &kp LEFT   &kp DOWN   &kp UP    &kp RIGHT  &trans
+&kp LSHFT   &tmux_1  &tmux_2  &tmux_3  &tmux_4  &tmux_5  &trans   &trans    &tmux_c &tmux_percent &tmux_less &tmux_greater &tmux_x &tmux_d
                      &trans   &trans   &trans   &trans    &trans   &trans    &trans       &trans     &trans
             >;
 

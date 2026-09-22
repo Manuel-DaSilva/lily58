@@ -1,0 +1,8 @@
+file_format: "1"
+id: ichiro_view
+name: nice!view (Ichiro art)
+type: shield
+url: https://nicekeyboards.com/nice-view
+requires: [nice_view_header]
+features:
+  - display
