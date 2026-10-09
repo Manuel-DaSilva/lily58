@@ -24,7 +24,7 @@ LOG_MODULE_DECLARE(zmk, CONFIG_ZMK_LOG_LEVEL);
 #include "peripheral_status.h"
 
 LV_IMG_DECLARE(ichiro);
-// Ichiro is generated from the repository's ichiro.jpeg for the right-hand display.
+// The one-bit cat portrait is generated from the repository's cat-portrait.png.
 
 static sys_slist_t widgets = SYS_SLIST_STATIC_INIT(&widgets);
 
@@ -115,7 +115,7 @@ int zmk_widget_status_init(struct zmk_widget_status *widget, lv_obj_t *parent) {
     lv_canvas_set_buffer(top, widget->cbuf, CANVAS_SIZE, CANVAS_SIZE, LV_IMG_CF_TRUE_COLOR);
 
     lv_obj_t *art = lv_img_create(widget->obj);
-    // The peripheral screen is dedicated to Ichiro's portrait.
+    // Keep the portrait on the left and the 20-pixel status strip on the right.
     lv_img_set_src(art, &ichiro);
     lv_obj_align(art, LV_ALIGN_TOP_LEFT, 0, 0);
 
