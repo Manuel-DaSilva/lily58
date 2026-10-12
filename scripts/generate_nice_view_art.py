@@ -10,9 +10,11 @@ import tempfile
 from pathlib import Path
 
 
-WIDTH = 140
-HEIGHT = 68
-ROW_BYTES = (WIDTH + 7) // 8
+PORTRAIT_WIDTH = 68
+PORTRAIT_HEIGHT = 140
+FRAMEBUFFER_WIDTH = PORTRAIT_HEIGHT
+FRAMEBUFFER_HEIGHT = PORTRAIT_WIDTH
+ROW_BYTES = (FRAMEBUFFER_WIDTH + 7) // 8
 PALETTE_BYTES = 8
 
 
@@ -33,13 +35,17 @@ def parse_pbm(path: Path) -> bytes:
             index += 1
         tokens.append(data[start:index])
 
-    if tokens != [b"P4", str(WIDTH).encode(), str(HEIGHT).encode()]:
+    if tokens != [
+        b"P4",
+        str(FRAMEBUFFER_WIDTH).encode(),
+        str(FRAMEBUFFER_HEIGHT).encode(),
+    ]:
         raise ValueError(f"unexpected PBM header: {tokens!r}")
 
     # A single whitespace character separates the header from the binary pixels.
     index += 1
-    bitmap = data[index : index + ROW_BYTES * HEIGHT]
-    if len(bitmap) != ROW_BYTES * HEIGHT:
+    bitmap = data[index : index + ROW_BYTES * FRAMEBUFFER_HEIGHT]
+    if len(bitmap) != ROW_BYTES * FRAMEBUFFER_HEIGHT:
         raise ValueError(f"unexpected PBM data size: {len(bitmap)}")
 
     # PBM uses 1 for black; the LVGL palette below uses index 0 for black.
@@ -53,7 +59,7 @@ def render_c(bitmap: bytes, source: Path) -> str:
         rows.append("        " + ", ".join(f"0x{byte:02x}" for byte in row) + ",")
 
     data_size = PALETTE_BYTES + len(bitmap)
-    return f"""/* Generated from {source.name} for the 140x68 one-bit nice!view display. */
+    return f"""/* Generated from {source.name} as a 68x140 portrait in the 140x68 nice!view framebuffer. */
 #include <lvgl.h>
 
 #ifndef LV_ATTRIBUTE_MEM_ALIGN
@@ -78,8 +84,8 @@ const lv_img_dsc_t ichiro = {{
     .header.cf = LV_IMG_CF_INDEXED_1BIT,
     .header.always_zero = 0,
     .header.reserved = 0,
-    .header.w = {WIDTH},
-    .header.h = {HEIGHT},
+    .header.w = {FRAMEBUFFER_WIDTH},
+    .header.h = {FRAMEBUFFER_HEIGHT},
     .data_size = {data_size},
     .data = ichiro_map,
 }};
@@ -90,7 +96,9 @@ def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("source", type=Path, help="source portrait")
     parser.add_argument("output", type=Path, help="generated LVGL C file")
-    parser.add_argument("--preview", type=Path, help="write the final 140x68 one-bit PNG")
+    parser.add_argument(
+        "--preview", type=Path, help="write the final 68x140 portrait-orientation one-bit PNG"
+    )
     args = parser.parse_args()
 
     if shutil.which("magick") is None:
@@ -98,34 +106,41 @@ def main() -> None:
 
     with tempfile.TemporaryDirectory() as temporary_directory:
         temporary_path = Path(temporary_directory)
-        preview = temporary_path / "preview.png"
-        pbm = temporary_path / "preview.pbm"
+        portrait = temporary_path / "portrait.png"
+        framebuffer = temporary_path / "framebuffer.png"
+        pbm = temporary_path / "framebuffer.pbm"
 
         subprocess.run(
             [
                 "magick",
                 str(args.source),
                 "-gravity",
-                "center",
+                "south",
                 "-resize",
-                f"{WIDTH}x{HEIGHT}^",
+                f"{PORTRAIT_WIDTH}x{PORTRAIT_HEIGHT}^",
                 "-extent",
-                f"{WIDTH}x{HEIGHT}",
+                f"{PORTRAIT_WIDTH}x{PORTRAIT_HEIGHT}",
                 "-colorspace",
                 "Gray",
                 "-threshold",
                 "55%",
                 "-type",
                 "bilevel",
-                str(preview),
+                str(portrait),
             ],
             check=True,
         )
-        subprocess.run(["magick", str(preview), f"pbm:{pbm}"], check=True)
+        # The nice!view driver exposes a 140x68 landscape framebuffer even though
+        # the panel is mounted as a 68x160 portrait. Match the widget's existing
+        # clockwise rotation so the portrait is upright on the physical panel.
+        subprocess.run(
+            ["magick", str(portrait), "-rotate", "90", str(framebuffer)], check=True
+        )
+        subprocess.run(["magick", str(framebuffer), f"pbm:{pbm}"], check=True)
 
         args.output.write_text(render_c(parse_pbm(pbm), args.source))
         if args.preview:
-            shutil.copyfile(preview, args.preview)
+            shutil.copyfile(portrait, args.preview)
 
 
 if __name__ == "__main__":
